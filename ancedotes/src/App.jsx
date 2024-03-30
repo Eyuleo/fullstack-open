@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Button from './components/Button'
-import Header from './components/Header'
+import Anecdote from './components/Anecdote'
 
 const App = () => {
 	const anecdotes = [
@@ -26,14 +26,29 @@ const App = () => {
 		newVote[selected] += 1
 		setVotes(newVote)
 	}
-	console.log(Math.max(...votes))
 
+	const highestVoteIndex = votes.reduce(
+		(highestIndex, currentVotes, currentIndex, arr) => {
+			if (currentVotes > arr[highestIndex]) {
+				return currentIndex
+			} else {
+				return highestIndex
+			}
+		},
+		0
+	)
 	return (
 		<div>
-			<Header anecdotes={anecdotes} selected={selected} votes={votes} />
+			<h1>Anecdote of the day</h1>
+			<Anecdote anecdotes={anecdotes} selected={selected} votes={votes} />
 			<Button text="vote" onClick={handleVote} />
 			<Button text="next anecdote" onClick={getNextAnecdote} />
-			<h2></h2>
+			<h2>Anecdote with most votes</h2>
+			<Anecdote
+				anecdotes={anecdotes}
+				selected={highestVoteIndex}
+				votes={votes}
+			/>
 		</div>
 	)
 }
