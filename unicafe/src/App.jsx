@@ -6,15 +6,22 @@ const App = () => {
 	const [good, setGood] = useState(0)
 	const [neutral, setNeutral] = useState(0)
 	const [bad, setBad] = useState(0)
+	const [all, seAll] = useState(0)
 
 	const handleGoodChange = () => {
-		setGood((prevState) => prevState + 1)
+		const updatedGood = good + 1
+		setGood(updatedGood)
+		seAll(updatedGood + neutral + bad)
 	}
 	const handleNeutralChange = () => {
-		setNeutral((prevState) => prevState + 1)
+		const updatedNeutral = neutral + 1
+		setNeutral(updatedNeutral)
+		seAll(updatedNeutral + good + bad)
 	}
 	const handleBadChange = () => {
-		setBad((prevState) => prevState + 1)
+		const updatedBad = bad + 1
+		setBad(updatedBad)
+		seAll(updatedBad + good + neutral)
 	}
 	return (
 		<div>
@@ -23,9 +30,16 @@ const App = () => {
 			<Button text="neutral" onClick={handleNeutralChange} />
 			<Button text="bad" onClick={handleBadChange} />
 			<h2>statistics</h2>
-			<Statistics text="good" count={good} />
-			<Statistics text="neutral" count={neutral} />
-			<Statistics text="bad" count={bad} />
+			{all <= 0 ? (
+				<p>no feedback given</p>
+			) : (
+				<>
+					<Statistics text="good" count={good} />
+					<Statistics text="neutral" count={neutral} />
+					<Statistics text="bad" count={bad} />
+					<Statistics text="total" count={all} />
+				</>
+			)}
 		</div>
 	)
 }
