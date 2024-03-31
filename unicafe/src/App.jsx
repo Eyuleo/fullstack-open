@@ -8,14 +8,16 @@ const App = () => {
 	const [bad, setBad] = useState(0)
 	const [all, seAll] = useState(0)
 	const [average, setAverage] = useState(0)
+	const [positive, setPositive] = useState(0)
 
 	const handleGoodChange = () => {
 		const updatedGood = good + 1
 		setGood(updatedGood)
 		seAll(updatedGood + neutral + bad)
 		if (all > 0) {
-			const newAverage = (updatedGood * 1 + bad * -1) / all
-			setAverage(newAverage.toFixed(2))
+			const newAverage = (updatedGood * 1 + bad * -1 + neutral * 0) / all
+			setAverage(newAverage)
+			setPositive((updatedGood / all) * 100)
 		}
 	}
 	const handleNeutralChange = () => {
@@ -23,8 +25,9 @@ const App = () => {
 		setNeutral(updatedNeutral)
 		seAll(updatedNeutral + good + bad)
 		if (all > 0) {
-			const newAverage = (good * 1 + bad * -1) / all
-			setAverage(newAverage.toFixed(2))
+			const newAverage = (good * 1 + bad * -1 + updatedNeutral * 0) / all
+			setAverage(newAverage)
+			setPositive((good / all) * 100)
 		}
 	}
 	const handleBadChange = () => {
@@ -32,8 +35,9 @@ const App = () => {
 		setBad(updatedBad)
 		seAll(updatedBad + good + neutral)
 		if (all > 0) {
-			const newAverage = (updatedBad * -1 + good * 1) / all
-			setAverage(newAverage.toFixed(2))
+			const newAverage = (good * 1 + updatedBad * -1 + neutral * 0) / all
+			setAverage(newAverage)
+			setPositive((good / all) * 100)
 		}
 	}
 	return (
@@ -51,7 +55,8 @@ const App = () => {
 					<Statistics text="neutral" count={neutral} />
 					<Statistics text="bad" count={bad} />
 					<Statistics text="all" count={all} />
-					<Statistics text="average" count={average} />
+					<Statistics text="average" count={average.toFixed(2)} />
+					<Statistics text="positive" count={`${positive.toFixed(2)}%`} />
 				</>
 			)}
 		</div>
