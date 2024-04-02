@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/contact'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -11,9 +11,9 @@ const App = () => {
 	const [query, setQuery] = useState('')
 
 	useEffect(() => {
-		axios
-			.get('http://localhost:3000/persons')
-			.then((res) => setPersons(res.data))
+		personService.getAll().then((res) => {
+			setPersons(res)
+		})
 	}, [])
 
 	const handleNameChange = (event) => {
@@ -35,12 +35,24 @@ const App = () => {
 			alert(`${newName} is already added to phonebook`)
 			return
 		} else {
-			setPersons([
-				...persons,
-				{ name: newName, number: phoneNumber, id: persons.length + 1 },
-			])
-			setNewName('')
-			setPhoneNumber('')
+			const newContact = {
+				name: newName,
+				number: phoneNumber,
+			}
+			personService.create(newContact).then((res) => {
+				setPersons(persons.concat(res))
+				setNewName('')
+				setPhoneNumber('')
+			})
+		}
+	}
+
+	const deleteContact = (id) => {
+		const prompt = window.confirm('Are you sure?')
+		if (prompt) {
+			personService.deleteContact(id).then(() => {
+				setPersons(persons.filter((person) => person.id !== id))
+			})
 		}
 	}
 
@@ -61,7 +73,7 @@ const App = () => {
 				handlePhoneChange={handlePhoneChange}
 			/>
 			<h2>Numbers</h2>
-			<Persons filteredContacts={filteredContacts} />
+			<Persons filteredContacts={filteredContacts} onDelete={deleteContact} />
 		</div>
 	)
 }
