@@ -1,4 +1,5 @@
-import express from 'express'
+import express, { json } from 'express'
+import morgan from 'morgan'
 
 const app = express()
 
@@ -53,7 +54,7 @@ app.get('/api/info', (req, res) => {
 	res.send(`<p>Phonebook has info for ${persons.length}</p><p>${date}</p>`)
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
 	const body = req.body
 	if (!body.name && !body.number) {
 		return res.status(400).json({
@@ -77,7 +78,14 @@ app.post('/api/persons', (req, res) => {
 
 	persons = persons.concat(person)
 	res.json(person)
+	next()
 })
+morgan.token('body', (req) => {
+	return JSON.stringify(req.body)
+})
+app.use(
+	morgan(':method :url :status :res[content-length]  :response-time ms :body')
+)
 
 app.delete('/api/persons/:id', (req, res) => {
 	const id = +req.params.id
