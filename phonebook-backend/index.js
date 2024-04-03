@@ -2,6 +2,8 @@ import express from 'express'
 
 const app = express()
 
+app.use(express.json())
+
 let persons = [
 	{
 		id: 1,
@@ -53,11 +55,19 @@ app.get('/api/info', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
 	const body = req.body
-	// if (!body.name) {
-	// 	return res.status(400).json({
-	// 		error: 'Contact info missing',
-	// 	})
-	// }
+	if (!body.name && !body.number) {
+		return res.status(400).json({
+			error: 'Contact info missing',
+		})
+	}
+
+	const duplicate = persons.find((person) => person.name === body.name)
+
+	if (duplicate) {
+		return res.status(400).json({
+			error: 'name must be unique',
+		})
+	}
 
 	const person = {
 		name: body.name,
